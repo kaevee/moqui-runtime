@@ -81,6 +81,21 @@ def fileMap = [
 def jsdelivrBase = "https://cdn.jsdelivr.net/npm/"
 def jsdelivrList = ["quasar@1.22.10/dist/quasar.min.css", "quasar@1.22.10/dist/quasar.umd.min.js"]
 
+// qvt2 stack: Vue 3 + Quasar 2 + Pinia 2 + vue-demi libs (full URL -> target path under libsPath)
+// These are kept separate from the qvt (Vue 2/Quasar 1) libs so both stacks coexist.
+def qvt2LibMap = [
+    // Vue JS 3 (global build -- exposes window.Vue)
+    "https://cdnjs.cloudflare.com/ajax/libs/vue/3.4.38/vue.global.js":          "vue3/vue.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/vue/3.4.38/vue.global.prod.min.js": "vue3/vue.min.js",
+    // Quasar 2 UMD + CSS
+    "https://cdn.jsdelivr.net/npm/quasar@2.18.6/dist/quasar.umd.prod.min.js": "quasar2/quasar.umd.min.js",
+    "https://cdn.jsdelivr.net/npm/quasar@2.18.6/dist/quasar.min.css":         "quasar2/quasar.min.css",
+    // vue-demi (bridges Vue 3 global for Pinia IIFE build -- must load before Pinia)
+    "https://cdn.jsdelivr.net/npm/vue-demi@0.14.10/lib/index.iife.js": "vue-demi/vue-demi.iife.min.js",
+    // Pinia 2 IIFE build (requires window.VueDemi set by vue-demi above)
+    "https://cdn.jsdelivr.net/npm/pinia@2.3.1/dist/pinia.iife.prod.js": "pinia/pinia.umd.min.js"
+]
+
 String getTargetPath(String sourcePath, String targetPath) {
     if (!targetPath) {
         String[] sourceSplit = sourcePath.split("/")
@@ -114,6 +129,15 @@ task downloadFiles { doLast {
         logger.lifecycle("Downloading ${sourceUrl} to ${targetFile.absolutePath}")
         targetFile.getParentFile().mkdirs()
         ant.get(src: sourceUrl, dest: targetFile)
+    }
+
+    for (Map.Entry qvt2Entry in qvt2LibMap.entrySet()) {
+        File targetFile = file(libsPath + '/' + qvt2Entry.value)
+        if (targetFile.exists()) continue
+
+        logger.lifecycle("Downloading ${qvt2Entry.key} to ${targetFile.absolutePath}")
+        targetFile.getParentFile().mkdirs()
+        ant.get(src: qvt2Entry.key, dest: targetFile)
     }
 } }
 
