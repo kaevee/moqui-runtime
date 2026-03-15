@@ -37,7 +37,9 @@ along with this software (see the LICENSE.md file). If not, see
     </transition>
     <transition name="menuData" read-only="true" begin-transaction="false">
         <actions><script><![CDATA[
-            List menuDataList = sri.getMenuData(sri.screenUrlInfo.extraPathNameList)
+            String qvt2Path = (String) ec.web.parameters.qvt2Path ?: ""
+            String screenMountedPath = (String) ec.web.parameters.screenMountedPath ?: ""
+            List menuDataList = sri.getMenuData(sri.screenUrlInfo.extraPathNameList, qvt2Path, screenMountedPath)
             if (menuDataList != null) ec.web.sendJsonResponse(menuDataList)
             ]]></script></actions>
         <!-- NOTE DEJ 20200806 use save-parameters="true" to re-save parameters otherwise lost from the menuData request under vapps, qapps, etc -->
