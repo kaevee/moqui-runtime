@@ -228,6 +228,7 @@ moqui.loadComponent = function(urlInfo, callback, divId) {
                 moqui.webrootVue.setUrl(r.headers.get("X-Redirect-To"));
                 return;
             }
+            if (!r.ok) throw new Error(r.status);
             var isServerStatic = (r.headers.get("Cache-Control") || '').indexOf("max-age") >= 0;
             return r.text().then(function(resp) {
                 if (!resp) { callback(moqui.NotFound); return; }

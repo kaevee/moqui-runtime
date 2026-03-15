@@ -15,7 +15,7 @@ Add Files to Moqui:
 */
 if (window.qz && window.moqui && moqui.webrootVue) {
     console.info("Creating QZ component");
-    moqui.webrootVue.qzVue = Vue.extend({
+    moqui.webrootVue.qzVue = Vue.defineComponent({
         template:
         '<span>' +
             '<button id="qz-print-modal-link" type="button" class="btn btn-sm navbar-btn navbar-right" :class="readyStyleBtn" data-toggle="modal" data-target="#qz-print-modal" title="Print Options"><i class="fa fa-print"></i></button>' +
