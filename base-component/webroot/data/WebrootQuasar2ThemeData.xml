@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+This software is in the public domain under CC0 1.0 Universal plus a
+Grant of Patent License.
+
+To the extent possible under law, the author(s) have dedicated all
+copyright and related and neighboring rights to this software to the
+public domain worldwide. This software is distributed without any
+warranty.
+
+You should have received a copy of the CC0 Public Domain Dedication
+along with this software (see the LICENSE.md file). If not, see
+<http://creativecommons.org/publicdomain/zero/1.0/>.
+-->
+<!-- Theme for the qvt2 stack (Vue 3 + Quasar 2). Mirrors DEFAULT_QUASAR but
+     references quasar2/ libs so the qvt and qvt2 stacks can coexist. -->
+<entity-facade-xml type="seed-initial">
+    <moqui.basic.Enumeration description="Internal Applications - Quasar 2" enumId="STT_INTERNAL_QUASAR2" enumTypeId="ScreenThemeType" enumCode="DEFAULT_QUASAR2"/>
+
+    <moqui.screen.ScreenTheme screenThemeId="DEFAULT_QUASAR2" screenThemeTypeEnumId="STT_INTERNAL_QUASAR2"
+            description="Moqui Default Quasar 2 Theme"/>
+
+    <moqui.screen.ScreenThemeResource screenThemeId="DEFAULT_QUASAR2" sequenceNum="1" resourceTypeEnumId="STRT_STYLESHEET" resourceValue=""/>
+    <moqui.screen.ScreenThemeResource screenThemeId="DEFAULT_QUASAR2" sequenceNum="2" resourceTypeEnumId="STRT_STYLESHEET"
+            resourceValue="/libs/font-awesome/css/font-awesome.min.css"/>
+    <!-- Roboto font and Material Icons (Google Fonts; Material Icons also embedded in Quasar 2 UMD CSS) -->
+    <moqui.screen.ScreenThemeResource screenThemeId="DEFAULT_QUASAR2" sequenceNum="3" resourceTypeEnumId="STRT_STYLESHEET"
+            resourceValue="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons"/>
+    <!-- Quasar 2 CSS (replaces Quasar 1 quasar.min.css used in DEFAULT_QUASAR) -->
+    <moqui.screen.ScreenThemeResource screenThemeId="DEFAULT_QUASAR2" sequenceNum="4" resourceTypeEnumId="STRT_STYLESHEET"
+            resourceValue="/libs/quasar2/quasar.min.css"/>
+
+    <moqui.screen.ScreenThemeResource screenThemeId="DEFAULT_QUASAR2" sequenceNum="10" resourceTypeEnumId="STRT_STYLESHEET" resourceValue=""/>
+
+    <moqui.screen.ScreenThemeResource screenThemeId="DEFAULT_QUASAR2" sequenceNum="20" resourceTypeEnumId="STRT_STYLESHEET"
+            resourceValue="/css/WebrootVue.qvt.css"/>
+
+    <moqui.screen.ScreenThemeResource screenThemeId="DEFAULT_QUASAR2" sequenceNum="100" resourceTypeEnumId="STRT_HEADER_LOGO"
+            resourceValue="/images/MoquiLogoSmall.png"/>
+    <moqui.screen.ScreenThemeResource screenThemeId="DEFAULT_QUASAR2" sequenceNum="101" resourceTypeEnumId="STRT_SHORTCUT_ICON"
+            resourceValue="/favicon.ico"/>
+
+    <moqui.screen.ScreenThemeResource screenThemeId="DEFAULT_QUASAR2" sequenceNum="200" resourceTypeEnumId="STRT_FOOTER_ITEM">
+        <resourceValue><![CDATA[<div class="col-md-6 text-center q-px-md"><a class="text-grey-1" href="https://www.moqui.org/" target="_blank">${ec.resource.expand('Built on Moqui ${ec.factory.moquiVersion}', '')}</a></div>]]></resourceValue>
+    </moqui.screen.ScreenThemeResource>
+    <moqui.screen.ScreenThemeResource screenThemeId="DEFAULT_QUASAR2" sequenceNum="201" resourceTypeEnumId="STRT_FOOTER_ITEM">
+        <resourceValue><![CDATA[<div class="col-md-6 text-center q-px-md"><a class="text-grey-1" href="/qapps2/ScreenTree">${ec.l10n.localize('Site Map')}</a></div>]]></resourceValue>
+    </moqui.screen.ScreenThemeResource>
+</entity-facade-xml>

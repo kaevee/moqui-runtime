@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+This software is in the public domain under CC0 1.0 Universal plus a
+Grant of Patent License.
+
+To the extent possible under law, the author(s) have dedicated all
+copyright and related and neighboring rights to this software to the
+public domain worldwide. This software is distributed without any
+warranty.
+
+You should have received a copy of the CC0 Public Domain Dedication
+along with this software (see the LICENSE.md file). If not, see
+<http://creativecommons.org/publicdomain/zero/1.0/>.
+-->
+<!-- qapps2: application shell for the qvt2 stack (Vue 3 + Quasar 2 + Pinia 2).
+     Parallel to qapps.xml (Vue 2 + Quasar 1). Both stacks coexist.
+     Server-side render mode registration for qvt2 is in moqui-framework
+     ScreenRenderImpl and MoquiDefaultConf.xml. -->
+<screen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/xml-screen-3.xsd"
+        require-authentication="false" screen-theme-type-enum-id="STT_INTERNAL_QUASAR2" default-menu-title="Applications" allow-extra-path="true">
+    <!-- NOTE: require-authentication=false so no permission required but in pre-actions if no user logged in goes to login screen -->
+
+    <pre-actions><script><![CDATA[
+        // if user not logged in save current path and params then redirect to Login
+        if (!ec.user.userId) { ec.web.saveScreenLastInfo(null, null); sri.sendRedirectAndStopRender('/Login') }
+
+        // Stylesheets -- loaded explicitly here because seed-initial theme data (DEFAULT_QUASAR2)
+        // may not be in DB if the first server startup had a component error before data loading.
+        // Mirrors WebrootQuasar2ThemeData.xml STRT_STYLESHEET resources.
+        html_stylesheets.add('/libs/font-awesome/css/font-awesome.min.css')
+        html_stylesheets.add('https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons')
+        html_stylesheets.add('/libs/quasar2/quasar.min.css')
+        html_stylesheets.add('/css/WebrootVue.qvt.css')
+
+        html_scripts.add('/libs/moment.js/moment-with-locales.min.js')
+        html_scripts.add('/libs/jquery/jquery.min.js')
+
+        String instancePurpose = System.getProperty("instance_purpose")
+        if (!instancePurpose || instancePurpose == 'production') {
+            /* ========== Production Mode ========== */
+            html_scripts.add('/js/MoquiLib.min.js')
+            // Vue JS 3 (global build, exposes window.Vue)
+            footer_scripts.add('/libs/vue3/vue.min.js')
+            // vue-demi -- must load after Vue, before Pinia (Pinia IIFE requires window.VueDemi)
+            footer_scripts.add('/libs/vue-demi/vue-demi.iife.min.js')
+            // Pinia 2 -- must load after vue-demi, before Quasar and WebrootVue
+            footer_scripts.add('/libs/pinia/pinia.umd.min.js')
+            // http-vue-loader
+            footer_scripts.add('/js/http-vue-loader/httpVueLoader.js')
+            // Quasar 2
+            footer_scripts.add('/libs/quasar2/quasar.umd.min.js')
+            // Pinia store definitions -- must load after Pinia, before WebrootVue
+            footer_scripts.add('/js/MoquiStore.js')
+            // Webroot Quasar 2 / Vue 3 instance, in footer so runs after page loaded
+            footer_scripts.add('/js/WebrootVue.qvt2.min.js')
+        } else {
+            /* ========== Dev Mode ========== */
+            html_scripts.add('/js/MoquiLib.js')
+            // Vue JS 3 (global build, exposes window.Vue)
+            footer_scripts.add('/libs/vue3/vue.js')
+            // vue-demi -- must load after Vue, before Pinia (Pinia IIFE requires window.VueDemi)
+            footer_scripts.add('/libs/vue-demi/vue-demi.iife.min.js')
+            // Pinia 2 -- must load after vue-demi, before Quasar and WebrootVue
+            footer_scripts.add('/libs/pinia/pinia.umd.min.js')
+            // http-vue-loader
+            footer_scripts.add('/js/http-vue-loader/httpVueLoader.js')
+            // Quasar 2
+            footer_scripts.add('/libs/quasar2/quasar.umd.min.js')
+            // Pinia store definitions -- must load after Pinia, before WebrootVue
+            footer_scripts.add('/js/MoquiStore.js')
+            // Webroot Quasar 2 / Vue 3 instance, in footer so runs after page loaded
+            footer_scripts.add('/js/WebrootVue.qvt2.js')
+        }
+
+        // conditional QZ Tray scripts, only include if enabled
+        if (ec.user.getPreference("qz.print.enabled") == "true") {
+            footer_scripts.add('/js/qz-tray/sha-256.min.js')
+            footer_scripts.add('/js/qz-tray/qz-tray.min.js')
+            footer_scripts.add('/js/qz-tray/MoquiQzComponent.js')
+        }
+    ]]></script></pre-actions>
+
+    <widgets>
+        <render-mode>
+            <!-- for html render the Vue 3 / Quasar 2 page wrapper (matches how qapps.xml uses type=html) -->
+            <text type="html" location="component://webroot/screen/includes/WebrootVue.qvt2.ftl"/>
+        </render-mode>
+    </widgets>
+</screen>

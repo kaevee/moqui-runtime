@@ -358,7 +358,10 @@
 
 	function parseComponentURL(url) {
 
-		var comp = url.match(/(.*?)([^/]+?)\/?(\.vue)?(\?.*|#.*|$)/);
+		// Extended to recognise .qvue and .vuet extensions used by Moqui in
+		// addition to the stock .vue extension. Without this, .qvue filenames
+		// are treated as directory names and /index.vue is appended (404).
+		var comp = url.match(/(.*?)([^/]+?)\/?(\.(?:vue|qvue|vuet))?(\?.*|#.*|$)/);
 		return {
 			name: comp[2],
 			url: comp[1] + comp[2] + (comp[3] === undefined ? '/index.vue' : comp[3]) + comp[4]
@@ -428,15 +431,22 @@
 		};
 	};
 
-	httpVueLoader.register = function(Vue, url) {
+	// Vue 3: parameter renamed Vue -> app, Vue.component -> app.component
+	httpVueLoader.register = function(app, url) {
 
 		var comp = parseComponentURL(url);
-		Vue.component(comp.name, httpVueLoader.load(comp.url));
+		app.component(comp.name, httpVueLoader.load(comp.url));
 	};
 
-	httpVueLoader.install = function(Vue) {
+	// Vue 3: parameter renamed Vue -> app, Vue.mixin -> app.mixin,
+	// Vue.component -> app.component.
+	// Vue.defineAsyncComponent() wrapping is required so Vue 3 binds the
+	// resolved component to the app context. Without it, resolveComponent()
+	// inside the loaded template cannot find globally registered components
+	// (Quasar q-card, q-btn etc. render as plain HTML elements).
+	httpVueLoader.install = function(app) {
 
-		Vue.mixin({
+		app.mixin({
 
 			beforeCreate: function () {
 
@@ -451,9 +461,9 @@
 						var componentURL = ('_baseURI' in this.$options) ? resolveURL(this.$options._baseURI, comp.url) : comp.url;
 
 						if ( isNaN(componentName) )
-							components[componentName] = httpVueLoader.load(componentURL, componentName);
+							components[componentName] = Vue.defineAsyncComponent(httpVueLoader.load(componentURL, componentName));
 						else
-							components[componentName] = Vue.component(comp.name, httpVueLoader.load(componentURL, comp.name));
+							components[componentName] = app.component(comp.name, Vue.defineAsyncComponent(httpVueLoader.load(componentURL, comp.name)));
 					}
 				}
 			}
