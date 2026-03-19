@@ -420,6 +420,7 @@ var app = Vue.createApp({
                 curHistoryItem.pathWithParams = curUrl;
                 window.history.pushState(null, curHistoryItem.title || '', curUrl);
             }
+            if (moqui.store) moqui.store().syncFromRoot();
             this.$root.reloadSubscreens();
         },
         addSubscreen: function(saComp) {
@@ -659,6 +660,7 @@ var app = Vue.createApp({
     watch: {
         // Pinia store sync -- fire on key state changes so moqui.store() stays current
         currentPath: function() { if (moqui.store) moqui.store().syncFromRoot(); },
+        currentParameters: { deep:true, handler: function() { if (moqui.store) moqui.store().syncFromRoot(); } },
         moquiSessionToken: function() { if (moqui.store) moqui.store().syncFromRoot(); },
         loading: function() { if (moqui.store) moqui.store().syncFromRoot(); },
         locale: function() { if (moqui.store) moqui.store().syncFromRoot(); },
